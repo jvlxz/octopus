@@ -1,0 +1,5 @@
+- name: Playbook with the base role
+  hosts: all
+  become: yes
+  roles:
+    - base
