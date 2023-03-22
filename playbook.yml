@@ -1,5 +1,17 @@
-- name: Playbook with the base role
+- name: Apply base role
   hosts: all
   become: yes
   roles:
     - base
+
+- name: Apply redis role
+  hosts: redis
+  become: yes
+  roles:
+    - redis
+
+- name: Apply poll role
+  hosts: poll
+  become: yes
+  roles:
+    - poll

@@ -1,0 +1,10 @@
+[Unit]
+Description=Poll
+
+[Service]
+ExecStart=python3 /home/poll/app.py
+Environment=REDIS_HOST={redis_host}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

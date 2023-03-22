@@ -1,5 +1,5 @@
 .DS_Store
 production
-poll/
-worker/
-result/
+/poll
+/worker
+/result

@@ -1,0 +1,28 @@
+- name: Copy application zip file
+  copy:
+    src: poll.tar
+    dest: /home
+    remote_src: no
+
+- name: Extract application zip file
+  unarchive:
+    src: /home/poll.tar
+    dest: /home
+    remote_src: yes
+
+
+- name: Install requirements
+  shell: pip3 install -r /home/poll/requirements.txt
+
+
+- name: Copy application service file
+  copy:
+    src: roles/poll/files/poll.service
+    dest: /etc/systemd/system
+    remote_src: no
+
+- name: Start application service
+  systemd:
+    name: poll
+    state: started
+    enabled: yes
