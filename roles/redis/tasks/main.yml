@@ -1,4 +1,17 @@
 - name: Install redis
   apt:
-    name: "redis-server"
+    name: redis-server
     state: present
+    update_cache: yes
+
+- name: Copy redis config
+  copy:
+    src: roles/redis/files/redis.conf
+    dest: /etc/redis/redis.conf
+    owner: root
+    group: root
+    mode: 0644
+
+
+- name: Start redis 
+  shell: redis-server /etc/redis/redis.conf
