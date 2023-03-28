@@ -1,0 +1,58 @@
+- name: Add GPG key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+    state: present
+
+- name: Install postgresql
+  apt:
+    name:
+    - "postgresql-{{ postgresql_version }}"
+    - "postgresql-client-{{ postgresql_version }}"
+    - "python-psycopg2"
+    - "libpq-dev"
+    state: present
+
+- name: Install psycopg2
+  pip:
+    name: psycopg2
+    state: present
+
+- name: Copy schema
+  copy:
+    src: roles/postgresql/files/schema.sql
+    dest: /home/postgres/
+
+- name: Copy config
+  copy:
+    src: roles/postgresql/files/pg_hba.conf
+    dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0666
+    remote_src: no
+
+- name: Create database
+  postgresql_db:
+    name: "{{ db_name }}"
+    state: present
+
+- name: Run schema
+  postgresql_query:
+    path_to_script: /home/postgres/schema.sql
+    as_single_query: true
+    db: "{{ db_name }}"
+    login_user: postgres
+
+- name: Create user
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "democracyIsFragile"
+    db: "{{ db_name }}"
+    priv: "CONNECT/votes:SELECT,INSERT,UPDATE"
+    role_attr_flags: NOSUPERUSER
+
