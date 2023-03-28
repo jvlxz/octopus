@@ -10,10 +10,8 @@
     dest: /home
     remote_src: yes
 
-
 - name: Install requirements
   shell: pip3 install -r /home/poll/requirements.txt
-
 
 - name: Copy application service file
   copy:

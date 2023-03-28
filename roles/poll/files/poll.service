@@ -2,8 +2,8 @@
 Description=Poll
 
 [Service]
+Environment=REDIS_HOST=165.22.30.223
 ExecStart=python3 /home/poll/app.py
-Environment=REDIS_HOST={redis_host}
 Restart=always
 
 [Install]
