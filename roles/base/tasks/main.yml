@@ -1,10 +1,9 @@
 - name: Install packages
   apt:
-    name: "{{ item }}"
+    name:
+    - "git"
+    - "unzip"
+    - "python3-pip"
+    - "nodejs"
+    - "npm"
     state: present
-  with_items:
-  - "git"
-  - "unzip"
-  - "python3-pip"
-  - "nodejs"
-  - "npm"
