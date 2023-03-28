@@ -1,0 +1,12 @@
+[Unit]
+Description=Result
+
+[Service]
+EnvironmentFile=/home/result/.env
+WorkingDirectory=/home/result
+ExecStart= npm start
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

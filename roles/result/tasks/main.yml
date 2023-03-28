@@ -1,0 +1,42 @@
+- name: Copy result folder
+  copy:
+    src: result.tar
+    dest: /home
+    remote_src: no
+
+- name: Extract result folder
+  unarchive:
+    src: /home/result.tar
+    dest: /home
+    remote_src: yes
+
+- name: Create env file
+  copy:
+    content: |
+      POSTGRESQL_HOST={{ POSTGRESQL_HOST }}
+      POSTGRESQL_PORT={{ POSTGRESQL_PORT }}
+      POSTGRESQL_DB={{ POSTGRESQL_DB }}
+      POSTGRESQL_USER={{ POSTGRESQL_USER }}
+      POSTGRESQL_PASSWORD={{ POSTGRESQL_PASSWORD }}
+    dest: /home/result/.env
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: no
+
+- name: Install requirements
+  shell: npm install --prefix /home/result
+
+- name: Copy application service file
+  copy:
+    src: roles/result/files/result.service
+    dest: /etc/systemd/system
+    remote_src: no
+
+
+- name: Start application services
+  systemd:
+    name: result
+    state: started
+    enabled: yes
+
