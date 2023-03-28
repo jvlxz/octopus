@@ -14,4 +14,7 @@
 
 
 - name: Start redis 
-  shell: redis-server /etc/redis/redis.conf
+  systemd:
+    name: redis
+    state: started
+    enabled: yes
