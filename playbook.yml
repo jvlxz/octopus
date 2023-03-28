@@ -10,8 +10,28 @@
   roles:
     - redis
 
+- name: Apply postgresql role
+  hosts: postgres
+  become: yes
+  roles:
+    - postgresql
+
 - name: Apply poll role
   hosts: poll
   become: yes
   roles:
     - poll
+
+- name: Apply worker role
+  hosts: worker
+  become: yes
+  roles:
+    - worker
+
+- name: Apply result role
+  hosts: result
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+  roles:
+    - result
