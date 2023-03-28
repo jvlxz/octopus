@@ -1,0 +1,10 @@
+[Unit]
+Description=Worker
+
+[Service]
+EnvironmentFile=/home/worker/.env
+ExecStart=java -jar /home/worker/target/worker-jar-with-dependencies.jar
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

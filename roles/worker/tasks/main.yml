@@ -1,0 +1,60 @@
+- name: Install java
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: Install maven
+  apt:
+    name: maven
+    state: present
+
+- name: Copy application zip file
+  copy:
+    src: worker.tar
+    dest: /home
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: no
+
+- name: Extract application zip file
+  unarchive:
+    src: /home/worker.tar
+    dest: /home
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+
+- name: Create env file
+  copy:
+    content: |
+      POSTGRESQL_HOST={{ POSTGRESQL_HOST }}
+      POSTGRESQL_PORT={{ POSTGRESQL_PORT }}
+      POSTGRESQL_DB={{ POSTGRESQL_DB }}
+      POSTGRESQL_USER={{ POSTGRESQL_USER }}
+      POSTGRESQL_PASSWORD={{ POSTGRESQL_PASSWORD }}
+      REDIS_HOST={{ REDIS_HOST }}
+    dest: /home/worker/.env
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: no
+
+- name: Use mvn
+  shell: mvn -f /home/worker/pom.xml clean package
+
+- name: Copy service
+  copy:
+    src: roles/worker/files/worker.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: no
+
+- name: Start application service
+  systemd:
+    name: worker
+    state: started
+    enabled: yes
