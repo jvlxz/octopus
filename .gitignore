@@ -3,3 +3,5 @@ production
 /poll
 /worker
 /result
+create_user.yml
+delete_user.yml
