@@ -12,8 +12,8 @@
     group: root
     mode: 0644
 
-
-- name: Start redis 
+- name: Start redis
+  become: yes
   systemd:
     name: redis
     state: started
