@@ -2,7 +2,7 @@
 Description=Poll
 
 [Service]
-Environment=REDIS_HOST=165.22.30.223
+EnvironmentFile=/home/poll/.env
 ExecStart=python3 /home/poll/app.py
 Restart=always
 
