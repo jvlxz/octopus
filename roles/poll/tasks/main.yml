@@ -11,7 +11,8 @@
     remote_src: yes
 
 - name: Install requirements
-  shell: pip3 install -r /home/poll/requirements.txt
+  pip:
+    requirements: /home/poll/requirements.txt
 
 - name: Create env file
   copy:
