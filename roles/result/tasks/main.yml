@@ -18,6 +18,7 @@
       POSTGRESQL_DB={{ POSTGRESQL_DB }}
       POSTGRESQL_USER={{ POSTGRESQL_USER }}
       POSTGRESQL_PASSWORD={{ POSTGRESQL_PASSWORD }}
+      PORT={{ PORT_RESULT }}
     dest: /home/result/.env
     owner: root
     group: root
