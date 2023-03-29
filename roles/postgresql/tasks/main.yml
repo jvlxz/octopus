@@ -5,7 +5,7 @@
 
 - name: Add repository
   apt_repository:
-    repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main
     state: present
 
 - name: Install postgresql
@@ -22,10 +22,15 @@
     name: psycopg2
     state: present
 
-- name: Copy schema
+- name: Copy config 
   copy:
-    src: roles/postgresql/files/schema.sql
-    dest: /home/postgres/
+    src: roles/postgresql/files/postgresql.conf
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: 0666
+    remote_src: no
+    force: yes
 
 - name: Copy config
   copy:
@@ -35,24 +40,37 @@
     group: postgres
     mode: 0666
     remote_src: no
+    force: yes
 
 - name: Create database
+  become_user: postgres
+  become: true
   postgresql_db:
-    name: "{{ db_name }}"
+    name: "{{ POSTGRESQL_DB }}"
     state: present
 
-- name: Run schema
-  postgresql_query:
-    path_to_script: /home/postgres/schema.sql
-    as_single_query: true
-    db: "{{ db_name }}"
-    login_user: postgres
+- name: Copy schema
+  copy:
+    src: roles/postgresql/files/schema.sql
+    dest: /home/postgres/
+
+- name: Setup database
+  become: true
+  changed_when: false
+  become_user: postgres
+  shell: "psql -d {{ POSTGRESQL_DB }} -f /home/postgres/schema.sql"
 
 - name: Create user
   postgresql_user:
-    name: "{{ db_user }}"
-    password: "democracyIsFragile"
-    db: "{{ db_name }}"
+    name: "{{ POSTGRESQL_USER }}"
+    password: "{{ POSTGRESQL_PASSWORD }}"
+    db: "{{ POSTGRESQL_DB }}"
     priv: "CONNECT/votes:SELECT,INSERT,UPDATE"
     role_attr_flags: NOSUPERUSER
+
+- name: Start postgresql
+  become: true
+  service:
+    name: postgresql
+    state: started
 
