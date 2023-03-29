@@ -43,8 +43,6 @@
     force: yes
 
 - name: Create database
-  become_user: postgres
-  become: true
   postgresql_db:
     name: "{{ POSTGRESQL_DB }}"
     state: present
@@ -54,12 +52,6 @@
     src: roles/postgresql/files/schema.sql
     dest: /home/postgres/
 
-- name: Setup database
-  become: true
-  changed_when: false
-  become_user: postgres
-  shell: "psql -d {{ POSTGRESQL_DB }} -f /home/postgres/schema.sql"
-
 - name: Create user
   postgresql_user:
     name: "{{ POSTGRESQL_USER }}"
@@ -67,10 +59,14 @@
     db: "{{ POSTGRESQL_DB }}"
     priv: "CONNECT/votes:SELECT,INSERT,UPDATE"
     role_attr_flags: NOSUPERUSER
+  
+- name: Setup database
+  changed_when: false
+  become: true
+  become_user: postgres
+  shell: "psql -d {{ POSTGRESQL_DB }} -f /home/postgres/schema.sql"
 
 - name: Start postgresql
-  become: true
   service:
     name: postgresql
     state: started
-
