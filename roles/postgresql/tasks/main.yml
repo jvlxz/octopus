@@ -42,31 +42,36 @@
     remote_src: no
     force: yes
 
-- name: Create database
-  postgresql_db:
-    name: "{{ POSTGRESQL_DB }}"
-    state: present
-
 - name: Copy schema
   copy:
     src: roles/postgresql/files/schema.sql
     dest: /home/postgres/
 
-- name: Create user
-  postgresql_user:
-    name: "{{ POSTGRESQL_USER }}"
-    password: "{{ POSTGRESQL_PASSWORD }}"
-    db: "{{ POSTGRESQL_DB }}"
-    priv: "CONNECT/votes:SELECT,INSERT,UPDATE"
-    role_attr_flags: NOSUPERUSER
-  
+- name: Create database
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: "{{ POSTGRESQL_DB }}"
+    state: present
+
 - name: Setup database
   changed_when: false
   become: true
   become_user: postgres
   shell: "psql -d {{ POSTGRESQL_DB }} -f /home/postgres/schema.sql"
 
-- name: Start postgresql
-  service:
+- name: Create user
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: "{{ POSTGRESQL_USER }}"
+    password: "{{ POSTGRESQL_PASSWORD }}"
+    db: "{{ POSTGRESQL_DB }}"
+    priv: "CONNECT/votes:SELECT,INSERT,UPDATE"
+    role_attr_flags: NOSUPERUSER
+
+- name: Restart postgresql
+  become: true
+  systemd:
     name: postgresql
-    state: started
+    state: restarted
