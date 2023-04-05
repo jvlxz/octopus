@@ -12,18 +12,13 @@
   copy:
     src: worker.tar
     dest: /home
-    owner: root
-    group: root
-    mode: 0644
     remote_src: no
 
 - name: Extract application zip file
+  become: yes
   unarchive:
     src: /home/worker.tar
     dest: /home
-    owner: root
-    group: root
-    mode: 0644
     remote_src: yes
 
 - name: Create env file
@@ -42,7 +37,7 @@
     remote_src: no
 
 - name: Use mvn
-  shell: mvn -f /home/worker/pom.xml clean package
+  shell: mvn clean install --file /home/worker/pom.xml
 
 - name: Copy service
   copy:

@@ -2,7 +2,6 @@
   apt:
     name: redis-server
     state: present
-    update_cache: yes
 
 - name: Copy redis config
   copy:
@@ -12,9 +11,25 @@
     group: root
     mode: 0644
 
-- name: Start redis
+- name: Create redis override config directory
+  file:
+    path: /etc/systemd/system/redis-server.service.d
+    state: directory
+    mode: 0755
+
+- name: Copy override config
+  copy:
+    src: roles/redis/files/override.conf
+    dest: /etc/systemd/system/redis-server.service.d/override.conf
+    mode: 0644
+
+- name: Reload systemd
   become: yes
   systemd:
-    name: redis
-    state: started
-    enabled: yes
+    daemon_reload: yes
+
+- name: Restart redis
+  become: yes
+  service:
+    name: redis-server
+    state: restarted

@@ -26,7 +26,9 @@
     remote_src: no
 
 - name: Install requirements
-  shell: npm install --prefix /home/result
+  npm:
+    path: /home/result
+    state: present
 
 - name: Copy application service file
   copy:
