@@ -1,5 +1,5 @@
 - name: Apply base role
-  hosts: all
+  hosts: poll, worker, result, redis, postgres
   become: yes
   roles:
     - base

@@ -1,3 +1,10 @@
+- name: Install npm and nodejs
+  apt:
+    name:
+    - npm
+    - nodejs
+    state: present
+
 - name: Copy result folder
   copy:
     src: result.tar

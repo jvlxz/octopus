@@ -8,11 +8,12 @@
     repo: deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main
     state: present
 
-- name: Install postgresql
+- name: Install postgresql and python
   apt:
     name:
     - "postgresql-{{ postgresql_version }}"
     - "postgresql-client-{{ postgresql_version }}"
+    - "python3-pip"
     - "python-psycopg2"
     - "libpq-dev"
     state: present
